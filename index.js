@@ -27,6 +27,12 @@ const ULTRAVOX_CALL_CONFIG = {
             corpus_id: "8d3bbd9a-0dc6-414e-9ee5-7a4724757d1c",
             max_results: 5
           }
+        },
+        {
+          toolName: "customerLookup"
+        },
+        {
+          toolName: "orderLookup"
         }
       ]
 };
