@@ -21,9 +21,9 @@ const ULTRAVOX_CALL_CONFIG = {
     firstSpeaker: 'FIRST_SPEAKER_AGENT',
     medium: { "twilio": {} },
     selectedTools:[
-        { "toolName": "CustomerLookup" },
-        { "toolName": "OrderLookup" },
-        { "toolName": "queryCorpus" }
+        { toolName: "CustomerLookup" },
+        { toolName: "OrderLookup" },
+        { toolName: "queryCorpus" }
      ]
 };
 
