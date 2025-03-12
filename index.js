@@ -19,12 +19,13 @@ const ULTRAVOX_CALL_CONFIG = {
     voice: 'Anjali-Hindi-Urdu',
     temperature: 0.3,
     firstSpeaker: 'FIRST_SPEAKER_AGENT',
-    medium: { "twilio": {} },
-    selectedTools:[
-        { toolName: "CustomerLookup" },
-        { toolName: "OrderLookup" },
-        { toolName: "queryCorpus" }
-     ]
+    medium: { "twilio": {} }
+    // ,
+    // selectedTools:[
+    //     { toolName: "CustomerLookup" },
+    //     { toolName: "OrderLookup" },
+    //     { toolName: "queryCorpus" }
+    //  ]
 };
 
 // Create Ultravox call and get join URL
