@@ -77,14 +77,14 @@ async function createUltravoxCall() {
                 console.log('Call ID:', callId);
                 console.log('Call Details:', responseData);
 
-                //Create webhook
-                createWebhook()
-                .then(response => {
-                    console.log('Webhook created:', response);
-                })
-                .catch(error => {
-                    console.error('Error creating webhook:', error);
-                });
+                // //Create webhook
+                // createWebhook()
+                // .then(response => {
+                //     console.log('Webhook created:', response);
+                // })
+                // .catch(error => {
+                //     console.error('Error creating webhook:', error);
+                // });
 
                 resolve(responseData);
             });
