@@ -4,7 +4,7 @@ import twilio from 'twilio';
 import 'dotenv/config'
 
 const app = express();
-const port = 3000;
+const port = 3100;
 
 // Configuration
 const ULTRAVOX_API_KEY = "81mYuyOH.nYoDrwpOIvxdxEpiCLDEHx2XzD3O8mGu"
@@ -33,8 +33,23 @@ const ULTRAVOX_CALL_CONFIG = {
         },
         {
           toolName: "orderLookup"
+        },
+        { 
+            toolName: "hangUp" 
         }
-      ]
+      ],
+      inactivityMessages: [
+        {
+          duration: "5s",
+          message: "Are you still there?",
+          endBehavior: "END_BEHAVIOR_UNSPECIFIED"
+        },
+        {
+          duration: "30s",
+          message: "If there's nothing else, I will end the call now.",
+          endBehavior: "END_BEHAVIOR_HANG_UP_SOFT"
+        }
+    ]
 };
 
 // Create Ultravox call and get join URL
@@ -52,7 +67,28 @@ async function createUltravoxCall() {
 
         request.on('response', (response) => {
             response.on('data', chunk => data += chunk);
-            response.on('end', () => resolve(JSON.parse(data)));
+            //response.on('end', () => resolve(JSON.parse(data)));
+
+            response.on('end', () => {
+                const responseData = JSON.parse(data);
+                // Store the callId here
+                const callId = responseData.callId;
+                // You can save this callId to a variable, database, or wherever is appropriate for your application
+                console.log('Call ID:', callId);
+                console.log('Call Details:', responseData);
+
+                //Create webhook
+                createWebhook()
+                .then(response => {
+                    console.log('Webhook created:', response);
+                })
+                .catch(error => {
+                    console.error('Error creating webhook:', error);
+                });
+
+                resolve(responseData);
+            });
+
         });
 
         request.on('error', reject);
@@ -60,6 +96,53 @@ async function createUltravoxCall() {
         request.end();
     });
 }
+
+// 1. Create a webhook
+const createWebhook = async () => {
+    const response = await fetch('https://api.ultravox.ai/api/webhooks', {
+      method: 'POST',
+      headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': ULTRAVOX_API_KEY
+        },
+      body: JSON.stringify({
+        url: 'https://baeb-122-171-17-224.ngrok-free.app/webhook',
+        events: ['call.ended']
+      })
+    });
+    return response.json();
+  };
+
+// app.post('/call-ended', async (req, res) => {
+//     const callId = req.body.callId;
+//     try {
+//       const transcripts = await getCallTranscripts(callId);
+//       // Process the transcripts as needed
+//       console.log('Call transcripts:', transcripts);
+//       res.sendStatus(200);
+//     } catch (error) {
+//       console.error('Error getting call transcripts:', error);
+//       res.sendStatus(500);
+//     }
+//   });
+
+  
+async function getCallTranscript(callId) {
+    const response = await fetch(`https://api.ultravox.ai/api/calls/${callId}/messages`, {
+      method: 'GET',
+      headers: {
+        'X-API-Key': 'ULTRAVOX_API_KEY',
+        'Content-Type': 'application/json'
+      }
+    });
+  
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
+    const data = await response.json();
+    return data.results;
+  }
 
 // Handle incoming calls
 app.post('/incoming', async (req, res) => {
