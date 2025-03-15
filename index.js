@@ -106,7 +106,7 @@ const createWebhook = async () => {
             'X-API-Key': ULTRAVOX_API_KEY
         },
       body: JSON.stringify({
-        url: 'https://3ba1-122-171-17-224.ngrok-free.app/webhook',
+        url: 'https://jtxviewer.onrender.com//webhook',
         events: ['call.ended']
       })
     });
