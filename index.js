@@ -11,7 +11,7 @@ const ULTRAVOX_API_KEY = "81mYuyOH.nYoDrwpOIvxdxEpiCLDEHx2XzD3O8mGu"
 const ULTRAVOX_API_URL = 'https://api.ultravox.ai/api/calls';
 
 // Ultravox configuration
-const SYSTEM_PROMPT = 'Your name is Anjali. You are an employee of Jio in India. You are receiving a phone call. Ask them their name and see how they are doing. You have to answer all the questions they ask you in a patient and friendly manner. You also know about Jio and its services. Keep your answers and conversations crisp, concise and to the point.You are speaking with the user over voice, so do not use lists, emojis or other things. Additionally, do not use action verbs or stage directions in your replies. Find order info by calling a tool orderLookup. Find customer info by calling a tool customerLookup. Find information on Jio FAQs by calling a tool queryCorpus. Do not tell about which tools you are using internally when talking to a customer.';
+const SYSTEM_PROMPT = 'Your name is Anjali. You are an employee of Jio in India. You are receiving a phone call. Ask them their name and see how they are doing. You have to answer all the questions they ask you in a patient and friendly manner. Always maintain a polite, positive, and empathetic tone. If the caller explicitly asks to speak with a human agent or insists on escalating, politely acknowledge their request, inform them that you will immediately transfer their call to a human representative, and initiate the transfer process promptly without further questioning. You know about Jio and its services. Keep your answers and conversations crisp, concise and to the point.You are speaking with the user over voice, so do not use lists, emojis or other things. Additionally, do not use action verbs or stage directions in your replies. Find order info by calling a tool orderLookup. Find customer info by calling a tool customerLookup. Find information on Jio services knowledge and FAQs by calling a tool queryCorpus. Do not tell about which tools you are using internally when talking to a customer.';
 
 const ULTRAVOX_CALL_CONFIG = {
     systemPrompt: SYSTEM_PROMPT,
@@ -36,7 +36,7 @@ const ULTRAVOX_CALL_CONFIG = {
           toolName: "orderLookup"
         },
         { 
-            toolName: "hangUp" 
+          toolName: "hangUp" 
         }
       ],
       inactivityMessages: [
@@ -77,16 +77,7 @@ async function createUltravoxCall() {
                 // You can save this callId to a variable, database, or wherever is appropriate for your application
                 console.log('Call ID:', callId);
                 console.log('Call Details:', responseData);
-
-                // //Create webhook
-                // createWebhook()
-                // .then(response => {
-                //     console.log('Webhook created:', response);
-                // })
-                // .catch(error => {
-                //     console.error('Error creating webhook:', error);
-                // });
-
+ 
                 resolve(responseData);
             });
 
@@ -98,52 +89,8 @@ async function createUltravoxCall() {
     });
 }
 
-// 1. Create a webhook
-const createWebhook = async () => {
-    const response = await fetch('https://api.ultravox.ai/api/webhooks', {
-      method: 'POST',
-      headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': ULTRAVOX_API_KEY
-        },
-      body: JSON.stringify({
-        url: 'https://jtxviewer.onrender.com//webhook',
-        events: ['call.ended']
-      })
-    });
-    return response.json();
-  };
 
-// app.post('/call-ended', async (req, res) => {
-//     const callId = req.body.callId;
-//     try {
-//       const transcripts = await getCallTranscripts(callId);
-//       // Process the transcripts as needed
-//       console.log('Call transcripts:', transcripts);
-//       res.sendStatus(200);
-//     } catch (error) {
-//       console.error('Error getting call transcripts:', error);
-//       res.sendStatus(500);
-//     }
-//   });
 
-  
-async function getCallTranscript(callId) {
-    const response = await fetch(`https://api.ultravox.ai/api/calls/${callId}/messages`, {
-      method: 'GET',
-      headers: {
-        'X-API-Key': 'ULTRAVOX_API_KEY',
-        'Content-Type': 'application/json'
-      }
-    });
-  
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-  
-    const data = await response.json();
-    return data.results;
-  }
 
 // Handle incoming calls
 app.post('/incoming', async (req, res) => {
@@ -158,6 +105,8 @@ app.post('/incoming', async (req, res) => {
         });
 
         const twimlString = twiml.toString();
+        console.log('twimlString', twimlString);
+
         res.type('text/xml');
         res.send(twimlString);
 
