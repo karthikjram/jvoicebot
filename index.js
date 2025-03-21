@@ -96,6 +96,11 @@ async function createUltravoxCall() {
 app.post('/incoming', async (req, res) => {
     try {
         console.log('Incoming call received');
+
+        // Extract caller's phone number
+        const callerNumber = req.body.From;
+        console.log('Incoming call from:', callerNumber);
+
         const response = await createUltravoxCall();
         const twiml = new twilio.twiml.VoiceResponse();
         const connect = twiml.connect();
